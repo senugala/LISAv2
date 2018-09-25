@@ -2,7 +2,6 @@
 # Licensed under the Apache License.
 function Main {
 	# Create test result
-	$result = ""	
 	$currentTestResult = CreateTestResultObject
 	$resultArr = @()
     try 
