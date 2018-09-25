@@ -10,6 +10,17 @@
         <Tags>bvt,boot</Tags>
     </test>
     <test>
+        <testName>BVT-VERIFY-NOBARRIER</testName>
+        <TestScript>BVT-VERIFY-NOBARRIER.ps1</TestScript>
+        <files>.\Testscripts\Linux\nobarrier.sh,.\TestScripts\Linux\utils.sh</files>
+        <files></files>
+        <setupType>SingleVM</setupType>
+        <Platform>Azure</Platform>
+        <Category>BVT</Category>
+        <Area>BVT</Area>
+        <Tags>bvt,boot</Tags>
+    </test>
+    <test>
         <testName>BVT-IS-ROOT-PASSWORD-DELETED</testName>
         <testScript>BVT-IS-ROOT-PASSWORD-DELETED.py</testScript>
         <files>.\Testscripts\Linux\BVT-IS-ROOT-PASSWORD-DELETED.py,.\Testscripts\Linux\azuremodules.py</files>
