@@ -4,14 +4,14 @@ function Main {
 	# Create test result
 	$currentTestResult = CreateTestResultObject
 	$resultArr = @()
-    try 
-	{
+try 
+{
 		
-		LogMsg "Check 1: Checking call traces again after 20 seconds sleep"
-		Start-Sleep 10
-		$count = 0
-		foreach ($VM in $allVMData)
-		{
+	LogMsg "Check 1: Checking call traces again after 20 seconds sleep"
+	Start-Sleep 10
+	$count = 0
+	foreach ($VM in $allVMData)
+	{
             $ResourceGroupUnderTest = $VM.ResourceGroupName
             $VirtualMachine = Get-AzureRmVM -ResourceGroupName $VM.ResourceGroupName -Name $VM.RoleName
             $diskCount = (Get-AzureRmVMSize -Location $allVMData.Location | Where-Object {$_.Name -eq $allVMData.InstanceSize}).MaxDataDiskCount
@@ -43,41 +43,41 @@ function Main {
                     }
                 }
             }
-		}
+	}
 		RemoteCopy -uploadTo $allVMData.PublicIP -port $allVMData.SSHPort -files $currentTestData.files -username $user -password $password -upload
 		$null = RunLinuxCmd -username $user -password $password -ip $allVMData.PublicIP -port $allVMData.SSHPort -command "chmod +x *" -runAsSudo
 		$testJob = RunLinuxCmd -ip $allVMData.PublicIP -port $allVMData.SSHPort -username $user -password $password -command "bash /home/$user/nobarrier.sh > nobarrierConsole.txt" -RunInBackground -runAsSudo
 		while ( (Get-Job -Id $testJob).State -eq "Running" )
 		{
-				$currentStatus = RunLinuxCmd -username $user -password $password -ip $allVMData.PublicIP -port $allVMData.SSHPort -command "tail -1 /home/$user/nobarrierConsole.txt" -runAsSudo
-				LogMsg "Current Test Staus : $currentStatus"
-				WaitFor -seconds 20
-			}
+			$currentStatus = RunLinuxCmd -username $user -password $password -ip $allVMData.PublicIP -port $allVMData.SSHPort -command "tail -1 /home/$user/nobarrierConsole.txt" -runAsSudo
+			LogMsg "Current Test Staus : $currentStatus"
+			WaitFor -seconds 20
+		}
 		$finalStatus = RunLinuxCmd -username $user -password $password -ip $allVMData.PublicIP -port $allVMData.SSHPort -command "cat /home/$user/state.txt" -runAsSudo
 		$testSummary = $null
 		if ( $finalStatus -imatch "TestFailed")
 		{
 			LogErr "Test failed. Last known status : $currentStatus."
 			$testResult = "FAIL"
-			}
-			elseif ( $finalStatus -imatch "TestAborted")
-			{
-				LogErr "Test Aborted. Last known status : $currentStatus."
-				$testResult = "ABORTED"
-			}
-			elseif ( $finalStatus -imatch "TestCompleted")
-			{
-				LogMsg "Test Completed."
-				$testResult = "PASS"
-	
-			}
 		}
+		elseif ( $finalStatus -imatch "TestAborted")
+		{
+			LogErr "Test Aborted. Last known status : $currentStatus."
+			$testResult = "ABORTED"
+		}
+		elseif ( $finalStatus -imatch "TestCompleted")
+		{
+			LogMsg "Test Completed."
+			$testResult = "PASS"
+	
+		}
+}
 catch 
 {
         $ErrorMessage =  $_.Exception.Message
         $ErrorLine = $_.InvocationInfo.ScriptLineNumber
         LogMsg "EXCEPTION : $ErrorMessage at line: $ErrorLine"
-    } 
+ } 
 finally 
 	{
         $metaData = ""
