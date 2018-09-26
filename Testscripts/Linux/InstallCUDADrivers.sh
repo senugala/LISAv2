@@ -26,7 +26,7 @@ while echo $1 | grep ^- > /dev/null; do
 done
 
 #Updated as of 23rd May 2018
-CUDADriverVersion="9.2.88-1"
+CUDADriverVersion="10.0.130-1"
 #############################
 
 
